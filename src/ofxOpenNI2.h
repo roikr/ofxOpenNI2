@@ -7,80 +7,61 @@
 #ifndef emptyExample_ofxOpenNI2_h
 #define emptyExample_ofxOpenNI2_h
 
-#include "NiTE.h"
-#include "ofThread.h"
+//#include "NiTE.h"
+#include "OpenNI.h"
+// #include "ofThread.h"
 #include "ofTexture.h"
-#include "ofPixels.h"
-#include <map>
-#include <vector>
+// #include "ofPixels.h"
+// #include <map>
+// #include <vector>
 
-#define MAX_DEPTH 10000
-#define MAX_USERS 10
 
-class ofxOpenNI2 : public ofThread {
+// #define MAX_DEPTH 10000
+// #define MAX_USERS 10
+
+class ofxOpenNI2 { //: public ofThread {
 private:
-    bool useDepth, useColor, useTracker;
-    int colorHeight, colorWidth, depthHeight, depthWidth;
-    int width, height;
+   
+    
+    
     
     openni::Device              device;
-    
-    nite::UserTracker           userTracker;
-    nite::UserTrackerFrameRef   userTrackerFrame;
-    openni::VideoFrameRef       userTrackerDepthFrame;
-    ofPixels                    userTrackerPixels;
-    ofTexture                   userTrackerTexture;
-    
-    map <int, nite::UserData>   trackedUsers;
-    vector <int>                trackedUserIds;
-    NiteUserData                defUserData;
-
-    openni::VideoFrameRef       depthFrame;
-    openni::VideoStream         depthStream;
-    ofPixels                    depthPixels;
-    ofTexture                   depthTexture;
-    
-    openni::VideoFrameRef       colorFrame;    
+    openni::VideoStream         depthStream;  
     openni::VideoStream         colorStream;
-    ofPixels                    colorPixels;
-    ofTexture                   colorTexture;
+
     
-    float   depthHist[MAX_DEPTH];
-    void calculateHistogram(float* histogram, int histogramSize, const openni::VideoFrameRef& frame);
+    // ofShortPixels                depthPixels;
+    // ofPixels                    colorPixels;
     
-protected:
-    void threadedFunction();
-    void checkStream();
+    // bool bNewColor;
+    // bool bNewDepth;
+
+    // float   depthHist[MAX_DEPTH];
+    // void calculateHistogram(float* histogram, int histogramSize, const openni::VideoFrameRef& frame);
+    
+// protected:
+    //void threadedFunction();
+    // void checkStream();
     
 public:
-    ofxOpenNI2();
-    ~ofxOpenNI2();
+
+    int colorHeight, colorWidth, depthHeight, depthWidth;
     
     void setup();
-    void start();
-    void stop();
+    void update();
+    void exit();
     
-    void initDepth();
-    void initImage();
-    void initTracker();
+    ofTexture                   depthTexture;
+    ofTexture                   colorTexture;
     
-    ofPixels        getColorPixels();
-    ofTexture       getColorTexture();
+    bool bNewColor;
+    bool bNewDepth;
+    // float           getDepth(int x, int y);
     
-    ofPixels        getDepthPixels();
-    ofTexture       getDepthTexture();
-    float           getDepth(int x, int y);
     
-    int             getTrackedUsers();
-    nite::UserData  getUserData(int id);
-    ofPixels        getTrackerPixels();
-    ofTexture       getTrackerTexture();
-
-	ofMutex			colorMutex;
-	ofMutex			depthMutex;
-	ofMutex			trackerMutex;
 };
 
+/*
 class ofxOpenNIScopedLock {
 public:
     ofxOpenNIScopedLock(ofMutex & _mutex): mutex(_mutex){
@@ -91,5 +72,5 @@ public:
     };
     ofMutex & mutex;
 };
-
+*/
 #endif
