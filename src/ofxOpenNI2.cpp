@@ -28,8 +28,9 @@ void ofxOpenNI2::setup() {
     }
     
     
-    //device.setDepthColorSyncEnabled(true);
+    
 
+    
     
     rc = depthStream.create(device, openni::SENSOR_DEPTH);
     if (rc != openni::STATUS_OK) {
@@ -75,7 +76,7 @@ void ofxOpenNI2::setup() {
     }
 
     
-    colorStream.setVideoMode(colorArray[9]); // 1280x1024
+    colorStream.setVideoMode(colorArray[9]); // 9 = 1280x1024
     
     mode = VideoMode(colorStream.getVideoMode());
     colorWidth = mode.getResolutionX();
@@ -96,6 +97,15 @@ void ofxOpenNI2::setup() {
 
     //startThread();
 
+    //device.setDepthColorSyncEnabled(true);
+    if (device.isImageRegistrationModeSupported(openni::IMAGE_REGISTRATION_DEPTH_TO_COLOR)) {
+        cout << "getImageRegistrationMode: " << device.getImageRegistrationMode() << endl;
+        rc = device.setImageRegistrationMode(openni::IMAGE_REGISTRATION_DEPTH_TO_COLOR);
+        if (rc != openni::STATUS_OK) {
+            cout << "IMAGE_REGISTRATION_DEPTH_TO_COLOR has been failed: " << openni::OpenNI::getExtendedError() << endl;
+        }
+        cout << "getImageRegistrationMode: " << device.getImageRegistrationMode() << endl;
+    }
 }
 
 void ofxOpenNI2::update() {
