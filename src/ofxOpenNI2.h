@@ -47,7 +47,12 @@ public:
 
     int colorHeight, colorWidth, depthHeight, depthWidth;
     
+    
     void setup();
+    void listDepthModes();
+    void setDepthMode(int index);
+    void listColorModes();
+    void setColorMode(int index);
     void update();
     void exit();
     

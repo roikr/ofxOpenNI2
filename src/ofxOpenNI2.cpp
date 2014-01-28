@@ -28,72 +28,27 @@ void ofxOpenNI2::setup() {
     }
     
     
-    
-
-    
-    
     rc = depthStream.create(device, openni::SENSOR_DEPTH);
     if (rc != openni::STATUS_OK) {
-        cout << "SimpleViewer: Couldn't find depth stream:" << openni::OpenNI::getExtendedError() << endl;
-        return;
+        cout << "ofxOpenNI2: Couldn't find depth stream:" << openni::OpenNI::getExtendedError() << endl;
+        
     }
 
-    
-    const Array<VideoMode> &depthArray = depthStream.getSensorInfo().getSupportedVideoModes();
-    cout << "depth modes: " << endl;
-    for (int i=0;i<depthArray.getSize();i++) {
-        const VideoMode &mode(depthArray[i]);
-        cout << '\t' << i << ": " << mode.getResolutionX() <<"x" << mode.getResolutionY() << ", " << mode.getPixelFormat() << ", " << mode.getFps() << endl;
-    }
-
-    depthStream.setVideoMode(depthArray[4]); // 640x480
-    VideoMode mode(depthStream.getVideoMode());
-    depthWidth = mode.getResolutionX();
-    depthHeight = mode.getResolutionY();
-    // depthPixels.allocate(depthWidth, depthHeight,OF_IMAGE_GRAYSCALE);
-    depthTexture.allocate(depthWidth, depthHeight, GL_LUMINANCE16);
-    cout << "depthMode: " << mode.getResolutionX() <<"x" << mode.getResolutionY() << ", " << mode.getPixelFormat() << ", " << mode.getFps() << endl;
-    
-    rc = depthStream.start();
-    if (rc != openni::STATUS_OK) {
-        cout << "SimpleViewer: Couldn't start depth stream:" << openni::OpenNI::getExtendedError() << endl;
-        depthStream.destroy();
-        return;
-    }
     
     rc = colorStream.create(device, openni::SENSOR_COLOR);
     if (rc != openni::STATUS_OK) {
-        cout << "SimpleViewer: Couldn't find color stream:" << openni::OpenNI::getExtendedError() << endl;
-        return;
-    }
-    
-
-    const Array<VideoMode> &colorArray = colorStream.getSensorInfo().getSupportedVideoModes();
-    cout << "color modes: " << endl;
-    for (int i=0;i<colorArray.getSize();i++) {
-        const VideoMode &mode(colorArray[i]);
-        cout << '\t' << i << ": " << mode.getResolutionX() <<"x" << mode.getResolutionY() << ", " << mode.getPixelFormat() << ", " << mode.getFps() << endl;
+        cout << "ofxOpenNI2: Couldn't find color stream:" << openni::OpenNI::getExtendedError() << endl;
+        
     }
 
-    
-    colorStream.setVideoMode(colorArray[9]); // 9 = 1280x1024
-    
-    mode = VideoMode(colorStream.getVideoMode());
-    colorWidth = mode.getResolutionX();
-    colorHeight = mode.getResolutionY();
-    // colorPixels.allocate(colorWidth, colorHeight, OF_IMAGE_COLOR);
-    colorTexture.allocate(colorWidth, colorHeight, GL_RGB);
 
-    cout << "colorMode: " << mode.getResolutionX() <<"x" << mode.getResolutionY() << ", " << mode.getPixelFormat() << ", " << mode.getFps() << endl;
     
-    rc = colorStream.start();
-    if (rc != openni::STATUS_OK) {
-        cout << "SimpleViewer: Couldn't start color stream:" << openni::OpenNI::getExtendedError() << endl;
-        colorStream.destroy();
-        return;
-    }
-    // bNewColor = false;
-    // bNewDepth = false;
+
+    
+    bNewColor = false;
+    bNewDepth = false;
+    
+    /*
 
     //startThread();
 
@@ -106,11 +61,76 @@ void ofxOpenNI2::setup() {
         }
         cout << "getImageRegistrationMode: " << device.getImageRegistrationMode() << endl;
     }
+    */
+}
+
+void ofxOpenNI2::listDepthModes() {
+    const Array<VideoMode> &depthArray = depthStream.getSensorInfo().getSupportedVideoModes();
+    cout << "depth modes: " << endl;
+    for (int i=0;i<depthArray.getSize();i++) {
+        const VideoMode &mode(depthArray[i]);
+        cout << '\t' << i << ": " << mode.getResolutionX() <<"x" << mode.getResolutionY() << ", " << mode.getPixelFormat() << ", " << mode.getFps() << endl;
+    }
+}
+
+
+void ofxOpenNI2::setDepthMode(int index) {
+    depthStream.stop();
+    const Array<VideoMode> &depthArray = depthStream.getSensorInfo().getSupportedVideoModes();
+    depthStream.setVideoMode(depthArray[index]);
+    
+    VideoMode mode(depthStream.getVideoMode());
+    depthWidth = mode.getResolutionX();
+    depthHeight = mode.getResolutionY();
+    // depthPixels.allocate(depthWidth, depthHeight,OF_IMAGE_GRAYSCALE);
+    
+    depthTexture.allocate(depthWidth, depthHeight, GL_LUMINANCE16); // GL_LUMINANCE8
+    
+    cout << "depthMode: " << mode.getResolutionX() <<"x" << mode.getResolutionY() << ", " << mode.getPixelFormat() << ", " << mode.getFps() << endl;
+    
+    Status rc = depthStream.start();
+    if (rc != openni::STATUS_OK) {
+        cout << "SimpleViewer: Couldn't start depth stream:" << openni::OpenNI::getExtendedError() << endl;
+        depthStream.destroy();
+        return;
+    }
+}
+
+void ofxOpenNI2::listColorModes() {
+    const Array<VideoMode> &colorArray = colorStream.getSensorInfo().getSupportedVideoModes();
+    cout << "color modes: " << endl;
+    for (int i=0;i<colorArray.getSize();i++) {
+        const VideoMode &mode(colorArray[i]);
+        cout << '\t' << i << ": " << mode.getResolutionX() <<"x" << mode.getResolutionY() << ", " << mode.getPixelFormat() << ", " << mode.getFps() << endl;
+    }
+}
+
+
+void ofxOpenNI2::setColorMode(int index) {
+    colorStream.stop();
+    const Array<VideoMode> &colorArray = colorStream.getSensorInfo().getSupportedVideoModes();
+    colorStream.setVideoMode(colorArray[index]); // 9 = 1280x1024
+    
+    VideoMode mode = VideoMode(colorStream.getVideoMode());
+    colorWidth = mode.getResolutionX();
+    colorHeight = mode.getResolutionY();
+    // colorPixels.allocate(colorWidth, colorHeight, OF_IMAGE_COLOR);
+    colorTexture.allocate(colorWidth, colorHeight, GL_RGB);
+    
+    cout << "colorMode: " << mode.getResolutionX() <<"x" << mode.getResolutionY() << ", " << mode.getPixelFormat() << ", " << mode.getFps() << endl;
+    
+    Status rc = colorStream.start();
+    if (rc != openni::STATUS_OK) {
+        cout << "SimpleViewer: Couldn't start color stream:" << openni::OpenNI::getExtendedError() << endl;
+        colorStream.destroy();
+        return;
+    }
+
 }
 
 void ofxOpenNI2::update() {
 
-   
+    /*
 
     VideoFrameRef       colorFrame; 
     colorStream.readFrame(&colorFrame);
@@ -121,6 +141,7 @@ void ofxOpenNI2::update() {
         colorTexture.loadData((unsigned char *)colorFrame.getData(), colorFrame.getWidth(), colorFrame.getHeight(),GL_RGB);
         bNewColor = true;
     }
+     */
 
     VideoFrameRef       depthFrame;
     depthStream.readFrame(&depthFrame);
@@ -128,7 +149,7 @@ void ofxOpenNI2::update() {
     bNewDepth=false;
     if ( depthFrame.isValid() ) {
         //depthPixels.setFromPixels((short unsigned int*)depthFrame.getData(), depthFrame.getWidth(), depthFrame.getHeight(), OF_IMAGE_GRAYSCALE);
-        depthTexture.loadData((short unsigned int*)depthFrame.getData(), depthFrame.getWidth(), depthFrame.getHeight(),GL_LUMINANCE);
+        depthTexture.loadData((short unsigned int*)depthFrame.getData(), depthFrame.getWidth(), depthFrame.getHeight(),GL_LUMINANCE); //GL_RED
         bNewDepth = true;
     }
 
