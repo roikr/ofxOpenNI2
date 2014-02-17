@@ -53,6 +53,7 @@ public:
     void setDepthMode(int index);
     void listColorModes();
     void setColorMode(int index);
+    void setRegistrationMode(bool bMode);
     void update();
     void exit();
     

@@ -52,15 +52,7 @@ void ofxOpenNI2::setup() {
 
     //startThread();
 
-    //device.setDepthColorSyncEnabled(true);
-    if (device.isImageRegistrationModeSupported(openni::IMAGE_REGISTRATION_DEPTH_TO_COLOR)) {
-        cout << "getImageRegistrationMode: " << device.getImageRegistrationMode() << endl;
-        rc = device.setImageRegistrationMode(openni::IMAGE_REGISTRATION_DEPTH_TO_COLOR);
-        if (rc != openni::STATUS_OK) {
-            cout << "IMAGE_REGISTRATION_DEPTH_TO_COLOR has been failed: " << openni::OpenNI::getExtendedError() << endl;
-        }
-        cout << "getImageRegistrationMode: " << device.getImageRegistrationMode() << endl;
-    }
+    
     */
 }
 
@@ -84,7 +76,7 @@ void ofxOpenNI2::setDepthMode(int index) {
     depthHeight = mode.getResolutionY();
     // depthPixels.allocate(depthWidth, depthHeight,OF_IMAGE_GRAYSCALE);
     
-    depthTexture.allocate(depthWidth, depthHeight, GL_LUMINANCE16); // GL_LUMINANCE8
+    depthTexture.allocate(depthWidth, depthHeight, GL_R8); // GL_LUMINANCE16
     
     cout << "depthMode: " << mode.getResolutionX() <<"x" << mode.getResolutionY() << ", " << mode.getPixelFormat() << ", " << mode.getFps() << endl;
     
@@ -128,9 +120,22 @@ void ofxOpenNI2::setColorMode(int index) {
 
 }
 
+void ofxOpenNI2::setRegistrationMode(bool bMode) {
+    //device.setDepthColorSyncEnabled(true);
+    openni::ImageRegistrationMode mode = bMode ? openni::IMAGE_REGISTRATION_DEPTH_TO_COLOR : openni::IMAGE_REGISTRATION_OFF;
+    if (device.isImageRegistrationModeSupported(mode)) {
+        cout << "getImageRegistrationMode: " << device.getImageRegistrationMode() << endl;
+        Status rc = device.setImageRegistrationMode(mode);
+        if (rc != openni::STATUS_OK) {
+            cout << "setImageRegistrationMode " << mode << " has been failed: " << openni::OpenNI::getExtendedError() << endl;
+        }
+        cout << "getImageRegistrationMode: " << device.getImageRegistrationMode() << endl;
+    }
+}
+
 void ofxOpenNI2::update() {
 
-    /*
+    
 
     VideoFrameRef       colorFrame; 
     colorStream.readFrame(&colorFrame);
@@ -141,7 +146,9 @@ void ofxOpenNI2::update() {
         colorTexture.loadData((unsigned char *)colorFrame.getData(), colorFrame.getWidth(), colorFrame.getHeight(),GL_RGB);
         bNewColor = true;
     }
-     */
+    
+    
+    
 
     VideoFrameRef       depthFrame;
     depthStream.readFrame(&depthFrame);
@@ -149,10 +156,10 @@ void ofxOpenNI2::update() {
     bNewDepth=false;
     if ( depthFrame.isValid() ) {
         //depthPixels.setFromPixels((short unsigned int*)depthFrame.getData(), depthFrame.getWidth(), depthFrame.getHeight(), OF_IMAGE_GRAYSCALE);
-        depthTexture.loadData((short unsigned int*)depthFrame.getData(), depthFrame.getWidth(), depthFrame.getHeight(),GL_LUMINANCE); //GL_RED
+        depthTexture.loadData((short unsigned int*)depthFrame.getData(), depthFrame.getWidth(), depthFrame.getHeight(),GL_RED); //GL_LUMINANCE
         bNewDepth = true;
     }
-
+    
     /*
 
     if (bNewColor) {
