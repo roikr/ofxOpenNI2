@@ -60,8 +60,12 @@ common:
 	# a specific platform
 	# ADDON_LIBS_EXCLUDE =
 	
+osx:
+	ADDON_LIBS_EXCLUDE = *
+
+
 linux64:
-	ADDON_LDFLAGS = -L./bin/libs -lOpenNI2 
+	ADDON_LDFLAGS = -L./bin -lOpenNI2 
 
 linuxarmv6l:
-	ADDON_LDFLAGS = -L./bin/libs -lOpenNI2 
+	ADDON_LDFLAGS = -L./bin -lOpenNI2 
