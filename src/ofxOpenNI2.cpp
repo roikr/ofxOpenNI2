@@ -35,11 +35,11 @@ void ofxOpenNI2::setup() {
     }
 
     
-    rc = colorStream.create(device, openni::SENSOR_COLOR);
-    if (rc != openni::STATUS_OK) {
-        cout << "ofxOpenNI2: Couldn't find color stream:" << openni::OpenNI::getExtendedError() << endl;
-        
-    }
+//    rc = colorStream.create(device, openni::SENSOR_COLOR);
+//    if (rc != openni::STATUS_OK) {
+//        cout << "ofxOpenNI2: Couldn't find color stream:" << openni::OpenNI::getExtendedError() << endl;
+//        
+//    }
 
 
     
@@ -75,8 +75,9 @@ void ofxOpenNI2::setDepthMode(int index) {
     depthWidth = mode.getResolutionX();
     depthHeight = mode.getResolutionY();
     // depthPixels.allocate(depthWidth, depthHeight,OF_IMAGE_GRAYSCALE);
+    // GL_R16 will hint opengl to allocate with GL_UNSIGNED_SHORT
+//    depthTexture.allocate(depthWidth, depthHeight, GL_R16 );  // GL_R16// GL_LUMINANCE16
     
-    depthTexture.allocate(depthWidth, depthHeight, GL_R8); // GL_LUMINANCE16
     
     cout << "depthMode: " << mode.getResolutionX() <<"x" << mode.getResolutionY() << ", " << mode.getPixelFormat() << ", " << mode.getFps() << endl;
     
@@ -150,15 +151,22 @@ void ofxOpenNI2::update() {
     
     
 
-    VideoFrameRef       depthFrame;
+    
     depthStream.readFrame(&depthFrame);
 
+    bNewDepth = depthFrame.isValid();
+    
+    /*
     bNewDepth=false;
     if ( depthFrame.isValid() ) {
+//        cout << depthFrame.getStrideInBytes() << endl;
         //depthPixels.setFromPixels((short unsigned int*)depthFrame.getData(), depthFrame.getWidth(), depthFrame.getHeight(), OF_IMAGE_GRAYSCALE);
-        depthTexture.loadData((short unsigned int*)depthFrame.getData(), depthFrame.getWidth(), depthFrame.getHeight(),GL_RED); //GL_LUMINANCE
+
+        // the magic is the short casting - which use GL_UNSIGNED_SHORT type
+        depthTexture.loadData((short unsigned int*)depthFrame.getData(), depthFrame.getWidth(), depthFrame.getHeight(),GL_RED); // GL_RED,GL_LUMINANCE
         bNewDepth = true;
     }
+     */
     
     /*
 
@@ -172,6 +180,10 @@ void ofxOpenNI2::update() {
         bNewDepth = false;
     }
     */
+}
+
+short unsigned int* ofxOpenNI2::getDepth() {
+    return (short unsigned int*)depthFrame.getData();
 }
 
 void ofxOpenNI2::exit() {

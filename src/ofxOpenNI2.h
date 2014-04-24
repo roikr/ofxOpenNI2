@@ -43,6 +43,8 @@ private:
     //void threadedFunction();
     // void checkStream();
     
+    openni::VideoFrameRef       depthFrame;
+    
 public:
 
     int colorHeight, colorWidth, depthHeight, depthWidth;
@@ -57,7 +59,12 @@ public:
     void update();
     void exit();
     
-    ofTexture                   depthTexture;
+    
+    short unsigned int *getDepth();
+    
+    
+    
+//    ofTexture                   depthTexture;
     ofTexture                   colorTexture;
     
     bool bNewColor;
