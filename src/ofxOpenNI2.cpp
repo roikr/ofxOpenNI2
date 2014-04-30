@@ -8,19 +8,41 @@
 
 using namespace openni;
 
-
-void ofxOpenNI2::setup() {
+void ofxOpenNI2::init() {
     Status rc = openni::OpenNI::initialize();
     if (rc != openni::STATUS_OK) {
         cout << "Failed to initialize OpenNI:" << openni::OpenNI::getExtendedError() << endl;
         return;
-        //return rc;
+        
+    }
+
+}
+
+vector<string> ofxOpenNI2::listDevices() {
+    openni::Array<openni::DeviceInfo> deviceList;
+	openni::OpenNI::enumerateDevices(&deviceList);
+    vector<string> devices;
+    for (int i=0;i<deviceList.getSize();i++) {
+        devices.push_back(deviceList[i].getUri());
     }
     
-    const char* deviceUri = openni::ANY_DEVICE;
-   
+    return devices;
+}
+
+
+void ofxOpenNI2::setup(string uri) {
+    
+    Status rc;
+    
+    if (uri.empty()) {
+        rc = device.open(openni::ANY_DEVICE);
+    }
+    else {
+        rc = device.open(uri.c_str());
+    }
+    
  
-    rc = device.open(deviceUri);
+     
     if (rc != openni::STATUS_OK) {
         cout << "Failed to open device:" << openni::OpenNI::getExtendedError() << endl;
         return;
@@ -184,6 +206,12 @@ void ofxOpenNI2::update() {
 
 short unsigned int* ofxOpenNI2::getDepth() {
     return (short unsigned int*)depthFrame.getData();
+}
+
+ofVec3f ofxOpenNI2::getWorldCoordinateAt(int x, int y,unsigned int depth) {
+    ofVec3f p;
+    CoordinateConverter::convertDepthToWorld(depthStream, x, y, depth, &p.x, &p.y, &p.z);
+    return p;
 }
 
 void ofxOpenNI2::exit() {

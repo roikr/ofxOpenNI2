@@ -49,8 +49,10 @@ public:
 
     int colorHeight, colorWidth, depthHeight, depthWidth;
     
+    static void init();
+    static vector<string> listDevices();
     
-    void setup();
+    void setup(string uri="");
     void listDepthModes();
     void setDepthMode(int index);
     void listColorModes();
@@ -60,8 +62,9 @@ public:
     void exit();
     
     
-    short unsigned int *getDepth();
     
+    short unsigned int *getDepth();
+    ofVec3f getWorldCoordinateAt(int x, int y,unsigned int depth);
     
     
 //    ofTexture                   depthTexture;
