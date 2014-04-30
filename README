@@ -1,6 +1,0 @@
-guidelines:
-
-1. download openNI2 sdk from primesense
-2. copy include dir to addons
-3. copy files under redist to bin folder
-4. works only with xcode
