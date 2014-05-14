@@ -57,11 +57,11 @@ void ofxOpenNI2::setup(string uri) {
     }
 
     
-//    rc = colorStream.create(device, openni::SENSOR_COLOR);
-//    if (rc != openni::STATUS_OK) {
-//        cout << "ofxOpenNI2: Couldn't find color stream:" << openni::OpenNI::getExtendedError() << endl;
-//        
-//    }
+    rc = colorStream.create(device, openni::SENSOR_COLOR);
+    if (rc != openni::STATUS_OK) {
+        cout << "ofxOpenNI2: Couldn't find color stream:" << openni::OpenNI::getExtendedError() << endl;
+        
+    }
 
 
     
@@ -78,13 +78,16 @@ void ofxOpenNI2::setup(string uri) {
     */
 }
 
-void ofxOpenNI2::listDepthModes() {
+vector<ofxOpenNI2::mode> ofxOpenNI2::listDepthModes() {
     const Array<VideoMode> &depthArray = depthStream.getSensorInfo().getSupportedVideoModes();
+    vector<ofxOpenNI2::mode> modes;
     cout << "depth modes: " << endl;
     for (int i=0;i<depthArray.getSize();i++) {
         const VideoMode &mode(depthArray[i]);
+        modes.push_back(ofxOpenNI2::mode(mode.getResolutionX(),mode.getResolutionY(),mode.getPixelFormat(),mode.getFps()));
         cout << '\t' << i << ": " << mode.getResolutionX() <<"x" << mode.getResolutionY() << ", " << mode.getPixelFormat() << ", " << mode.getFps() << endl;
     }
+    return modes;
 }
 
 
@@ -111,13 +114,18 @@ void ofxOpenNI2::setDepthMode(int index) {
     }
 }
 
-void ofxOpenNI2::listColorModes() {
+vector<ofxOpenNI2::mode> ofxOpenNI2::listColorModes() {
     const Array<VideoMode> &colorArray = colorStream.getSensorInfo().getSupportedVideoModes();
+    vector<ofxOpenNI2::mode> modes;
+    vector<pair<ofVec2f,ofVec2f> > list;
     cout << "color modes: " << endl;
     for (int i=0;i<colorArray.getSize();i++) {
         const VideoMode &mode(colorArray[i]);
+        modes.push_back(ofxOpenNI2::mode(mode.getResolutionX(),mode.getResolutionY(),mode.getPixelFormat(),mode.getFps()));
         cout << '\t' << i << ": " << mode.getResolutionX() <<"x" << mode.getResolutionY() << ", " << mode.getPixelFormat() << ", " << mode.getFps() << endl;
+        
     }
+    return modes;
 }
 
 
@@ -130,7 +138,7 @@ void ofxOpenNI2::setColorMode(int index) {
     colorWidth = mode.getResolutionX();
     colorHeight = mode.getResolutionY();
     // colorPixels.allocate(colorWidth, colorHeight, OF_IMAGE_COLOR);
-    colorTexture.allocate(colorWidth, colorHeight, GL_RGB);
+//    colorTexture.allocate(colorWidth, colorHeight, GL_RGB);
     
     cout << "colorMode: " << mode.getResolutionX() <<"x" << mode.getResolutionY() << ", " << mode.getPixelFormat() << ", " << mode.getFps() << endl;
     
@@ -159,23 +167,17 @@ void ofxOpenNI2::setRegistrationMode(bool bMode) {
 void ofxOpenNI2::update() {
 
     
-
-    VideoFrameRef       colorFrame; 
     colorStream.readFrame(&colorFrame);
+    bNewColor = colorStream.isValid();
     
-    bNewColor = false;
-    if ( colorFrame.isValid() ) {    
-        //colorPixels.setFromPixels((unsigned char *)colorFrame.getData(), colorFrame.getWidth(), colorFrame.getHeight(), OF_IMAGE_COLOR);
-        colorTexture.loadData((unsigned char *)colorFrame.getData(), colorFrame.getWidth(), colorFrame.getHeight(),GL_RGB);
-        bNewColor = true;
-    }
-    
-    
-    
-
+//    bNewColor = false;
+//    if ( colorFrame.isValid() ) {
+//        //colorPixels.setFromPixels((unsigned char *)colorFrame.getData(), colorFrame.getWidth(), colorFrame.getHeight(), OF_IMAGE_COLOR);
+//        colorTexture.loadData((unsigned char *)colorFrame.getData(), colorFrame.getWidth(), colorFrame.getHeight(),GL_RGB);
+//        bNewColor = true;
+//    }
     
     depthStream.readFrame(&depthFrame);
-
     bNewDepth = depthFrame.isValid();
     
     /*
@@ -208,9 +210,15 @@ short unsigned int* ofxOpenNI2::getDepth() {
     return (short unsigned int*)depthFrame.getData();
 }
 
+unsigned char* ofxOpenNI2::getColor() {
+    return (unsigned char*)colorFrame.getData();
+}
+
 ofVec3f ofxOpenNI2::getWorldCoordinateAt(int x, int y,unsigned int depth) {
     ofVec3f p;
+    
     CoordinateConverter::convertDepthToWorld(depthStream, x, y, depth, &p.x, &p.y, &p.z);
+    
     return p;
 }
 

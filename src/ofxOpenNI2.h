@@ -44,8 +44,17 @@ private:
     // void checkStream();
     
     openni::VideoFrameRef       depthFrame;
+    openni::VideoFrameRef        colorFrame;
     
 public:
+    
+    struct mode {
+        mode(int width,int height,int pixelFormat,int fps):width(width),height(height),pixelFormat(pixelFormat),fps(fps) {};
+        int width;
+        int height;
+        int pixelFormat;
+        int fps;
+    };
 
     int colorHeight, colorWidth, depthHeight, depthWidth;
     
@@ -53,9 +62,9 @@ public:
     static vector<string> listDevices();
     
     void setup(string uri="");
-    void listDepthModes();
+    vector<mode> listDepthModes();
     void setDepthMode(int index);
-    void listColorModes();
+    vector<mode> listColorModes();
     void setColorMode(int index);
     void setRegistrationMode(bool bMode);
     void update();
@@ -64,11 +73,12 @@ public:
     
     
     short unsigned int *getDepth();
+    unsigned char *getColor();
     ofVec3f getWorldCoordinateAt(int x, int y,unsigned int depth);
     
     
 //    ofTexture                   depthTexture;
-    ofTexture                   colorTexture;
+//    ofTexture                   colorTexture;
     
     bool bNewColor;
     bool bNewDepth;
