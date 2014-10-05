@@ -10,26 +10,36 @@ void ofApp::setup(){
 //    cout << version << endl;
 //    shader.load("shaders/shader.vert", "shaders/shader.frag");
     ofEnableAlphaBlending();
+    ofDisableArbTex();
+    ofxOpenNI2::init();
     
     cam.setup();
-    cam.setDepthMode(0);
-    cam.setColorMode(0);
+    cam.setDepthMode(5);
+    cam.setColorMode(9);
 
-    
+    tex.allocate(cam.colorWidth, cam.colorHeight, GL_RGB );
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
     cam.update();
+    
+    if(cam.bNewColor) {
+        tex.loadData(cam.getColor(), cam.colorWidth, cam.colorHeight,GL_RGB);
+        
+        
+        
+    }
+
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
     ofBackground(0);
     
-   
-    cam.depthTexture.draw(0,0);
-    cam.colorTexture.draw(0,cam.depthHeight);
+    tex.draw(0,0);
+    //cam.depthTexture.draw(0,0);
+    //cam.colorTexture.draw(0,cam.depthHeight);
     
 }
 

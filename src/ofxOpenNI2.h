@@ -46,6 +46,8 @@ private:
     openni::VideoFrameRef       depthFrame;
     openni::VideoFrameRef        colorFrame;
     
+    
+    
 public:
     
     struct mode {
@@ -60,6 +62,8 @@ public:
     
     static void init();
     static vector<string> listDevices();
+    openni::VideoStream& getColorStream() { return colorStream;};
+    openni::VideoStream& getDepthStream() { return depthStream;};
     
     void setup(string uri="");
     vector<mode> listDepthModes();
@@ -70,6 +74,7 @@ public:
     void update();
     void exit();
     
+
     
     
     short unsigned int *getDepth();

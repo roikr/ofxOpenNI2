@@ -15,6 +15,8 @@ void ofxOpenNI2::init() {
         return;
         
     }
+    
+    
 
 }
 
@@ -54,8 +56,7 @@ void ofxOpenNI2::setup(string uri) {
     if (rc != openni::STATUS_OK) {
         cout << "ofxOpenNI2: Couldn't find depth stream:" << openni::OpenNI::getExtendedError() << endl;
         
-    }
-
+    } else
     
     rc = colorStream.create(device, openni::SENSOR_COLOR);
     if (rc != openni::STATUS_OK) {
@@ -112,6 +113,9 @@ void ofxOpenNI2::setDepthMode(int index) {
         depthStream.destroy();
         return;
     }
+    
+    
+
 }
 
 vector<ofxOpenNI2::mode> ofxOpenNI2::listColorModes() {
@@ -148,7 +152,7 @@ void ofxOpenNI2::setColorMode(int index) {
         colorStream.destroy();
         return;
     }
-
+    
 }
 
 void ofxOpenNI2::setRegistrationMode(bool bMode) {

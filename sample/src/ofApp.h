@@ -22,5 +22,5 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
     
     ofxOpenNI2 cam;
-    
+    ofTexture tex;
 };
