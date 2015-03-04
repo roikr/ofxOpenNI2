@@ -71,6 +71,8 @@ void ofxOpenNI2::setup(string uri) {
     bNewColor = false;
     bNewDepth = false;
     
+    bColorStarted = false;
+    bDepthStarted = false;
     /*
 
     //startThread();
@@ -114,6 +116,7 @@ void ofxOpenNI2::setDepthMode(int index) {
         return;
     }
     
+    bDepthStarted = true;
     
 
 }
@@ -153,6 +156,25 @@ void ofxOpenNI2::setColorMode(int index) {
         return;
     }
     
+    bColorStarted = true;
+    
+}
+
+
+void ofxOpenNI2::startColor() {
+    Status rc = colorStream.start();
+    if (rc != openni::STATUS_OK) {
+        cout << "SimpleViewer: Couldn't start color stream:" << openni::OpenNI::getExtendedError() << endl;
+        colorStream.destroy();
+        return;
+    }
+    
+    bColorStarted = true;
+}
+
+void ofxOpenNI2::stopColor() {
+    colorStream.stop();
+    bColorStarted = false;
 }
 
 void ofxOpenNI2::setRegistrationMode(bool bMode) {
@@ -170,9 +192,12 @@ void ofxOpenNI2::setRegistrationMode(bool bMode) {
 
 void ofxOpenNI2::update() {
 
-    
-    colorStream.readFrame(&colorFrame);
-    bNewColor = colorStream.isValid();
+    if (colorStream.isValid() && bColorStarted) {
+        colorStream.readFrame(&colorFrame);
+        bNewColor = colorFrame.isValid();
+    } else {
+        bNewColor = false;
+    }
     
 //    bNewColor = false;
 //    if ( colorFrame.isValid() ) {
@@ -181,8 +206,13 @@ void ofxOpenNI2::update() {
 //        bNewColor = true;
 //    }
     
-    depthStream.readFrame(&depthFrame);
-    bNewDepth = depthFrame.isValid();
+    if (depthStream.isValid() && bDepthStarted) {
+        depthStream.readFrame(&depthFrame);
+        bNewDepth = depthFrame.isValid();
+    } else {
+        bNewDepth = false;
+    }
+    //bNewDepth = depthFrame.isValid();
     
     /*
     bNewDepth=false;

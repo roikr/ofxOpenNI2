@@ -74,7 +74,8 @@ public:
     void update();
     void exit();
     
-
+    void startColor();
+    void stopColor();
     
     
     short unsigned int *getDepth();
@@ -84,6 +85,8 @@ public:
     
 //    ofTexture                   depthTexture;
 //    ofTexture                   colorTexture;
+    bool bDepthStarted;
+    bool bColorStarted;
     
     bool bNewColor;
     bool bNewDepth;
