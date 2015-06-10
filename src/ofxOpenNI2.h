@@ -81,6 +81,7 @@ public:
     short unsigned int *getDepth();
     unsigned char *getColor();
     ofVec3f getWorldCoordinateAt(int x, int y,unsigned int depth);
+    ofVec3f getWorldCoordinateAlt(int u,int v,unsigned int depth); // self calculation in meter units
     
     
 //    ofTexture                   depthTexture;
@@ -91,6 +92,10 @@ public:
     bool bNewColor;
     bool bNewDepth;
     // float           getDepth(int x, int y);
+    float constant_x;
+    float constant_y;
+    float centerX;
+    float centerY;
     
     
 };

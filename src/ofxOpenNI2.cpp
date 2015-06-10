@@ -102,6 +102,17 @@ void ofxOpenNI2::setDepthMode(int index) {
     VideoMode mode(depthStream.getVideoMode());
     depthWidth = mode.getResolutionX();
     depthHeight = mode.getResolutionY();
+    
+    int size = sizeof(float);
+    float horizontalFov;
+    float verticalFov;
+    depthStream.getProperty(ONI_STREAM_PROPERTY_HORIZONTAL_FOV, &horizontalFov, &size);
+    depthStream.getProperty(ONI_STREAM_PROPERTY_VERTICAL_FOV, &verticalFov, &size);
+    constant_x = tan(horizontalFov / 2) * 2 /depthWidth;
+    constant_y = tan(verticalFov / 2) * 2 / depthHeight;
+    centerX = ((float)depthWidth - 1.f) / 2.f;
+    centerY = ((float)depthHeight - 1.f) / 2.f;
+    
     // depthPixels.allocate(depthWidth, depthHeight,OF_IMAGE_GRAYSCALE);
     // GL_R16 will hint opengl to allocate with GL_UNSIGNED_SHORT
 //    depthTexture.allocate(depthWidth, depthHeight, GL_R16 );  // GL_R16// GL_LUMINANCE16
@@ -254,6 +265,14 @@ ofVec3f ofxOpenNI2::getWorldCoordinateAt(int x, int y,unsigned int depth) {
     CoordinateConverter::convertDepthToWorld(depthStream, x, y, depth, &p.x, &p.y, &p.z);
     
     return p;
+}
+
+ofVec3f ofxOpenNI2::getWorldCoordinateAlt(int u,int v,unsigned int depth) {
+    ofVec3f pt;
+    pt.z = static_cast<float> (depth);
+    pt.x = (static_cast<float> (u) - centerX) * pt.z * constant_x;
+    pt.y = (static_cast<float> (v) - centerY) * pt.z * constant_y;
+    return pt;
 }
 
 void ofxOpenNI2::exit() {
