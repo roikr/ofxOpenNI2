@@ -51,6 +51,7 @@ private:
 public:
     
     struct mode {
+        mode() {}; // default constructor
         mode(int width,int height,int pixelFormat,int fps):width(width),height(height),pixelFormat(pixelFormat),fps(fps) {};
         int width;
         int height;
@@ -58,7 +59,10 @@ public:
         int fps;
     };
 
-    int colorHeight, colorWidth, depthHeight, depthWidth;
+    
+    mode depthMode;
+    
+    int colorHeight, colorWidth;
     
     static void init();
     static vector<string> listDevices();
