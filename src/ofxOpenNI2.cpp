@@ -281,7 +281,7 @@ ofVec3f ofxOpenNI2::getWorldCoordinateAlt(int u,int v,unsigned int depth) {
             break;
     }
     
-    pt.x = (static_cast<float> (u) - centerX) * pt.z * constant_x;
+    pt.x = (centerX-static_cast<float> (u)) * pt.z * constant_x;
     pt.y = (centerY-static_cast<float> (v)) * pt.z * constant_y;
     return pt;
 }
