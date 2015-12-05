@@ -3,11 +3,15 @@ lightweight openFrameworks addons for OpenNI 2.x
 The ofxOpenNI2 is a lightweight wrapper for the OpenNI 2.x (NiTE 2 is not included).
 
 OSX guidelines:
+0. brew cask install java
 
-1. brew install openni2 --universal (openframeworks 0.84 support only 32 bit on osx) 
+1. brew install openni2 ( --universal for openframeworks 0.84 - support only 32 bit on osx) 
+
 2. edit your Project.xconfig:
+
 OTHER_LDFLAGS = $(OF_CORE_LIBS) "/usr/local/lib/ni2/libOpenNI2.dylib"
 HEADER_SEARCH_PATHS = $(OF_CORE_HEADERS) "/usr/local/include/ni2"
+
 3. you don't need to copy the dylib to your bin path because it is installed on your system
 
 linux64
