@@ -27,7 +27,7 @@ private:
     
     openni::Device              device;
     openni::VideoStream         depthStream;  
-    openni::VideoStream         colorStream;
+    
 
     
     // ofShortPixels                depthPixels;
@@ -49,6 +49,7 @@ private:
     
     
 public:
+    openni::VideoStream         colorStream;
     
     struct mode {
         mode() {}; // default constructor
